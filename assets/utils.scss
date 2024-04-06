@@ -1,0 +1,14 @@
+.utils-animation-underline {
+    display: inline-block;
+    &::after {
+        content: "";
+        width: 0px;
+        height: 1px;
+        display: block;
+        background: currentColor;
+        transition: 300ms;
+    }
+    &:hover::after {
+        width: 100%;
+    }
+}

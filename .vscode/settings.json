@@ -1,0 +1,37 @@
+{
+    "workbench.iconTheme": "material-icon-theme",
+    "files.autoSave": "onWindowChange",
+    "editor.minimap.enabled": false,
+    "workbench.tree.indent": 20,
+    "explorer.confirmDelete": false,
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.fontFamily": "Operator Mono",
+    // Controls the line height. Use 0 to compute the lineHeight from the fontSize.
+    "editor.lineHeight": 24,
+    // Enables font ligatures
+    "editor.fontLigatures": true,
+    // Controls if file decorations should use badges.
+    "explorer.decorations.badges": false,
+    "workbench.colorTheme": "Material Theme High Contrast",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "eslint.validate": ["javascript"],
+    "git.openRepositoryInParentFolders": "never",
+    "editor.useTabStops": false,
+    "prettier.tabWidth": 4,
+    "prettier.endOfLine": "auto",
+    "editor.tabSize": 4,
+    "volar.format.initialIndent": {
+        "html": true
+    },
+    "window.zoomLevel": 1,
+    "extensions.ignoreRecommendations": true,
+    "Codegeex.Privacy": true
+}
