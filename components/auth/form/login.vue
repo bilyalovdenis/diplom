@@ -1,6 +1,22 @@
 <template>
     <AuthFormBase @button-click="singInClick">
         <template #header> Войти в аккаунт </template>
+        <pre>Status: <span data-testid="status">{{ status }}</span></pre>
+        <pre>
+Data: {{ data || "no session data present, are you logged in?" }}</pre
+        >
+        <pre>
+Last refreshed at: {{ lastRefreshedAt || "no refresh happened" }}</pre
+        >
+        <pre>
+JWT token: {{ token || "no token present, are you logged in?" }}</pre
+        >
+        <pre>
+JWT refreshToken: {{
+                refreshToken || "no refreshToken present, are you logged in?"
+            }}</pre
+        >
+        <button @click="refresh()">refresh tokens</button>
         <AuthFormInput
             label="Почта"
             placeholder="Введите почту"
@@ -24,6 +40,9 @@
 </template>
 
 <script setup lang="ts">
+const { signIn, refreshToken, refresh, token, data, status, lastRefreshedAt } =
+    useAuth();
+
 const email = ref("");
 const emailHasError = ref<boolean>(false);
 const emailError = ref("");
@@ -34,20 +53,12 @@ const passwdHasError = ref<boolean>(false);
 const passwdError = ref("");
 watch(passwd, () => (passwdHasError.value = false));
 
-const { signIn } = useAuth();
-
 const singInClick = async () => {
     const credentials = {
-        email: email.value,
+        username: email.value,
         password: passwd.value,
     };
-    try {
-        const tmp = await signIn(credentials);
-        console.log(tmp);
-        alert("Successfully logged in!");
-    } catch (error) {
-        console.log(error);
-    }
+    await signIn(credentials, { callbackUrl: "/" });
 };
 </script>
 

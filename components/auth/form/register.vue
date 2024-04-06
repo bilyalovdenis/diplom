@@ -1,5 +1,5 @@
 <template>
-    <AuthFormBase>
+    <AuthFormBase @button-click="singUpClick">
         <template #header> Создать аккаунт </template>
         <div class="container">
             <AuthFormInput
@@ -40,6 +40,8 @@
 </template>
 
 <script setup lang="ts">
+const { signUp } = useAuth();
+
 const name = ref("");
 const nameHasError = ref<boolean>(false);
 const nameError = ref("");
@@ -59,6 +61,17 @@ const confirmedPasswd = ref("");
 const confirmedPasswdHasError = ref<boolean>(false);
 const confirmedPasswdError = ref("");
 watch(confirmedPasswd, () => (confirmedPasswdHasError.value = false));
+
+const singUpClick = async () => {
+    //TODO Добавить валидацию сохранения паролей
+    const credentials = {
+        username: name.value,
+        password: passwd.value,
+        email: email.value,
+    };
+
+    await signUp(credentials, { callbackUrl: "/" });
+};
 </script>
 
 <style scoped lang="scss">

@@ -30,12 +30,13 @@
 </template>
 
 <script setup lang="ts">
-import { META, PATHS } from "~/constants/route";
-
+import { PATHS } from "~/constants/route";
 definePageMeta({
     layout: "empty",
     name: PATHS.login.name,
-    [META.authNotNeeded]: true,
+    auth: {
+        unauthenticatedOnly: true,
+    },
 });
 </script>
 

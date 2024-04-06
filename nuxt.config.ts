@@ -5,18 +5,29 @@ export default defineNuxtConfig({
     typescript: {
         typeCheck: true,
     },
+    build: {
+        transpile: ["jsonwebtoken"],
+    },
     modules: ["nuxt-primevue", "@pinia/nuxt", "@sidebase/nuxt-auth"],
     auth: {
+        baseURL: "/api/auth",
         provider: {
-            type: "local",
+            type: "refresh",
             endpoints: {
-                getSession: { path: "/user" },
-            },
-            pages: {
-                login: "/",
+                signIn: { path: "/login", method: "post" },
+                signOut: { path: "/logout", method: "post" },
+                signUp: { path: "/registration", method: "post" },
+                getSession: { path: "/session", method: "get" },
+                refresh: { path: "/refresh", method: "post" },
             },
             token: {
                 signInResponseTokenPointer: "/token/accessToken",
+                maxAgeInSeconds: 60 * 5, // 5 min
+                sameSiteAttribute: "lax",
+            },
+            refreshToken: {
+                signInResponseRefreshTokenPointer: "/token/refreshToken",
+                refreshRequestTokenPointer: "/refreshToken",
             },
             sessionDataType: {
                 id: "string",
@@ -27,13 +38,7 @@ export default defineNuxtConfig({
                     "{ id: number, status: 'ACTIVE' | 'INACTIVE' }[]",
             },
         },
-        session: {
-            // Whether to refresh the session every time the browser window is refocused.
-            enableRefreshOnWindowFocus: true,
-
-            // Whether to refresh the session every `X` milliseconds. Set this to `false` to turn it off. The session will only be refreshed if a session already exists.
-            enableRefreshPeriodically: 5000,
-        },
+        globalAppMiddleware: true,
     },
     primevue: {
         /* Options */

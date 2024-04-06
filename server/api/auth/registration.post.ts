@@ -6,12 +6,16 @@ export const SECRET = "dummy"; //TODO вынести в конфиг
 
 export default eventHandler(async (event) => {
     const result = z
-        .object({ username: z.string().min(1), password: z.literal("hunter2") })
+        .object({
+            username: z.string().min(1),
+            email: z.string().email(),
+            password: z.string().min(1),
+        })
         .safeParse(await readBody(event));
     if (!result.success) {
         throw createError({
             statusCode: 403,
-            statusMessage: "Unauthorized, hint: try `hunter2` as password",
+            statusMessage: result.error.message,
         });
     }
 
