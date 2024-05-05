@@ -5,10 +5,11 @@
         </h2>
         <slot name="default" />
         <Button
+            type="submit"
+            :loading="props.loading"
             class="auth-form__auth-button"
             severity="primary"
             rounded
-            @click="emit('buttonClick')"
         >
             <slot name="button" />
         </Button>
@@ -18,10 +19,11 @@
 </template>
 
 <script setup lang="ts">
-type Emits = {
-    buttonClick: [];
+type Props = {
+    loading?: boolean;
 };
-const emit = defineEmits<Emits>();
+
+const props = defineProps<Props>();
 </script>
 
 <style scoped lang="scss">

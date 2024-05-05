@@ -1,8 +1,8 @@
 import { createError, eventHandler, readBody } from "h3";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
-
-export const SECRET = "dummy"; //TODO вынести в конфиг
+import { Client } from "stytch";
+import { SECRET } from "./login.post";
 
 export default eventHandler(async (event) => {
     const result = z
@@ -19,6 +19,20 @@ export default eventHandler(async (event) => {
         });
     }
 
+    const client = new Client({
+        project_id: "project-test-a6a4e32e-8905-4ded-9f24-f67ef84572c1",
+        secret: "secret-test-2Zjmd_RoxEyrwyt2ukZpCe5MynURopd-y9E=",
+    });
+
+    const params = {
+        email: "sandbox@stytch.com",
+    };
+    try {
+        const resp = client.users.create(params);
+        console.log("resp", resp);
+    } catch (error) {
+        console.log("error", error);
+    }
     const expiresIn = 15;
 
     const { username } = result.data;

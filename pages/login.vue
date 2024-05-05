@@ -6,7 +6,7 @@
                 src="logo.png"
                 alt="logo"
                 width="40"
-            ></Image>
+            />
             <span>BUSINKA</span>
         </header>
         <article class="auth-card">
@@ -15,7 +15,7 @@
                 image-class="auth-card__image-container__image"
                 src="/auth.jpg"
             />
-            <AuthFormLogin></AuthFormLogin>
+            <AuthFormLogin />
         </article>
         <div class="auth-container-auth-redirect">
             <span>Еще не фанат Бусинки?</span>
@@ -37,6 +37,9 @@ definePageMeta({
     auth: {
         unauthenticatedOnly: true,
     },
+});
+onMounted(() => {
+    console.log(process.env.STYTCH_PROJECT_ID, process.env);
 });
 </script>
 

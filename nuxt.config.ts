@@ -8,7 +8,25 @@ export default defineNuxtConfig({
     build: {
         transpile: ["jsonwebtoken"],
     },
-    modules: ["nuxt-primevue", "@pinia/nuxt", "@sidebase/nuxt-auth"],
+    modules: [
+        "nuxt-primevue",
+        "@pinia/nuxt",
+        "@sidebase/nuxt-auth",
+        "nuxt-zod-i18n",
+        "@nuxtjs/i18n",
+        "@vee-validate/nuxt",
+    ],
+    veeValidate: {
+        // disable or enable auto imports
+        autoImports: true,
+        // Use different names for components
+        componentNames: {
+            Form: "VeeForm",
+            Field: "VeeField",
+            FieldArray: "VeeFieldArray",
+            ErrorMessage: "VeeErrorMessage",
+        },
+    },
     auth: {
         baseURL: "/api/auth",
         provider: {
@@ -48,4 +66,9 @@ export default defineNuxtConfig({
         "~/assets/main.scss",
         "normalize.css/normalize.css",
     ],
+    zodI18n: {},
+    i18n: {
+        vueI18n: "./i18n.config.ts", // if you are using custom path, default
+        defaultLocale: "ru", // default locale of your project for Nuxt pages and routing
+    },
 });

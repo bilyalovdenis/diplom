@@ -15,8 +15,9 @@
     display: grid;
     min-height: 100vh;
     grid-template-areas:
-        "header header header"
+        "sidebar header header"
         "sidebar main main";
-    grid-template-rows: 100px 1fr;
+    grid-template-rows: 64px 1fr;
+    grid-template-columns: 280px 1fr;
 }
 </style>

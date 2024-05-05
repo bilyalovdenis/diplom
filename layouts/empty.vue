@@ -10,6 +10,6 @@
 .empty-container {
     width: 100vw;
     height: 100vh;
-    background-color: var(--color-background);
+    background-color: var(--surface-ground);
 }
 </style>

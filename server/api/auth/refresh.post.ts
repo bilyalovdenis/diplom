@@ -1,7 +1,6 @@
 import { createError, eventHandler, readBody } from "h3";
 import jwt from "jsonwebtoken";
-
-export const SECRET = "dummy";
+import { SECRET } from "./login.post";
 
 interface User {
     username: string;
@@ -16,7 +15,6 @@ interface JwtPayload extends User {
 
 export default eventHandler(async (event) => {
     const body = await readBody<{ refreshToken: string }>(event);
-
     if (!body.refreshToken) {
         throw createError({
             statusCode: 403,
@@ -35,8 +33,6 @@ export default eventHandler(async (event) => {
         });
     }
 
-    const expiresIn = 60 * 5; // 5 minutes
-
     const user: User = {
         username: decoded.username,
         picture: decoded.picture,
@@ -44,7 +40,7 @@ export default eventHandler(async (event) => {
     };
 
     const accessToken = jwt.sign({ ...user, scope: ["test", "user"] }, SECRET, {
-        expiresIn,
+        expiresIn: 15,
     });
     const refreshToken = jwt.sign(
         { ...user, scope: ["test", "user"] },

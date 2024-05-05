@@ -9,5 +9,6 @@
 <style scoped>
 .main-layout_main {
     grid-area: main;
+    background-color: papayawhip;
 }
 </style>

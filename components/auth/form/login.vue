@@ -1,36 +1,21 @@
 <template>
-    <AuthFormBase @button-click="singInClick">
+    <AuthFormBase @submit.prevent="submit" :loading="isLoading">
         <template #header> Войти в аккаунт </template>
-        <pre>Status: <span data-testid="status">{{ status }}</span></pre>
-        <pre>
-Data: {{ data || "no session data present, are you logged in?" }}</pre
-        >
-        <pre>
-Last refreshed at: {{ lastRefreshedAt || "no refresh happened" }}</pre
-        >
-        <pre>
-JWT token: {{ token || "no token present, are you logged in?" }}</pre
-        >
-        <pre>
-JWT refreshToken: {{
-                refreshToken || "no refreshToken present, are you logged in?"
-            }}</pre
-        >
-        <button @click="refresh()">refresh tokens</button>
+        {{ values }}
+        {{ errors }}
         <AuthFormInput
             label="Почта"
             placeholder="Введите почту"
             v-model="email"
-            v-model:is-error="emailHasError"
-            v-model:error="emailError"
+            v-bind="emailAttrs"
+            v-model:error="errors.email"
         />
         <AuthFormInput
             label="Пароль"
             placeholder="Введите пароль"
-            v-model="passwd"
-            v-model:is-error="passwdHasError"
-            v-model:error="passwdError"
-            :style="{ 'margin-bottom': '24px' }"
+            v-model="password"
+            v-bind="passwordAttrs"
+            v-model:error="errors.password"
         />
         <template #button>
             Войти
@@ -40,25 +25,32 @@ JWT refreshToken: {{
 </template>
 
 <script setup lang="ts">
-const { signIn, refreshToken, refresh, token, data, status, lastRefreshedAt } =
-    useAuth();
+const { signIn } = useAuth();
 
-const email = ref("");
-const emailHasError = ref<boolean>(false);
-const emailError = ref("");
-watch(email, () => (emailHasError.value = false));
+const { values, errors, setFieldError, defineField } = useForm();
+const [email, emailAttrs] = defineField("email");
+const [password, passwordAttrs] = defineField("password");
 
-const passwd = ref("");
-const passwdHasError = ref<boolean>(false);
-const passwdError = ref("");
-watch(passwd, () => (passwdHasError.value = false));
+const isLoading = ref(false);
 
-const singInClick = async () => {
+const submit = async () => {
     const credentials = {
-        username: email.value,
-        password: passwd.value,
+        email: email.value,
+        password: password.value,
     };
-    await signIn(credentials, { callbackUrl: "/" });
+    try {
+        isLoading.value = true;
+        await signIn(credentials, { callbackUrl: "/" });
+    } catch (error: any) {
+        const issues: any = error?.data?.data?.error?.issues;
+        if (issues) {
+            issues.forEach((issue: any) => {
+                setFieldError(issue?.path?.[0], issue.message);
+            });
+        }
+    } finally {
+        isLoading.value = false;
+    }
 };
 </script>
 

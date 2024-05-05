@@ -2,28 +2,31 @@
     <div class="auth-form__input-container">
         <label for="username">{{ props.label }}</label>
         <InputText
+            v-bind="$attrs"
             v-model="modelValue"
             :placeholder="props.placeholder"
-            :invalid="isError"
+            :invalid="Boolean(error)"
             class="auth-form__input-container__input"
         />
         <Transition name="fade">
-            <InlineMessage
-                v-if="isError"
-                class="auth-form__input-container__message"
-            >
+            <small v-if="error" class="auth-form__input-container__message">
                 {{ error }}
-            </InlineMessage>
+            </small>
         </Transition>
     </div>
 </template>
 
 <script setup lang="ts">
 type Props = { label?: string; placeholder?: string };
-const props = withDefaults(defineProps<Props>(), { label: "" });
+const props = withDefaults(defineProps<Props>(), {
+    label: "",
+});
 const modelValue = defineModel<string>();
-const isError = defineModel<boolean>("isError");
-const error = defineModel<string>("error");
+const error = defineModel<string | undefined>("error");
+
+defineOptions({
+    inheritAttrs: false,
+});
 </script>
 
 <style scoped lang="scss">
@@ -43,9 +46,6 @@ const error = defineModel<string>("error");
     height: 40px;
 }
 .auth-form__input-container__message {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    transform: translateX(120%);
+    color: var(--red-500);
 }
 </style>

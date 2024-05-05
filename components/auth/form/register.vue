@@ -1,36 +1,34 @@
 <template>
-    <AuthFormBase @button-click="singUpClick">
+    <AuthFormBase @submit.prevent="singUpClick">
         <template #header> Создать аккаунт </template>
         <div class="container">
             <AuthFormInput
                 label="Имя"
                 placeholder="Введите ваше имя"
                 v-model="name"
-                v-model:is-error="nameHasError"
                 v-model:error="nameError"
             />
             <AuthFormInput
                 label="Почта"
+                type="email"
                 placeholder="Введите почту"
                 v-model="email"
-                v-model:is-error="emailHasError"
                 v-model:error="emailError"
             />
         </div>
         <AuthFormInput
             label="Пароль"
+            type="password"
             placeholder="Введите пароль"
             v-model="passwd"
-            v-model:is-error="passwdHasError"
             v-model:error="passwdError"
         />
         <AuthFormInput
             label="Повторите пароль"
+            type="password"
             placeholder="Повторите пароль"
             v-model="confirmedPasswd"
-            v-model:is-error="confirmedPasswdHasError"
             v-model:error="confirmedPasswdError"
-            :style="{ 'margin-bottom': '24px' }"
         />
         <template #button>
             Зарегистрироваться
@@ -61,9 +59,9 @@ const confirmedPasswd = ref("");
 const confirmedPasswdHasError = ref<boolean>(false);
 const confirmedPasswdError = ref("");
 watch(confirmedPasswd, () => (confirmedPasswdHasError.value = false));
-
 const singUpClick = async () => {
-    //TODO Добавить валидацию сохранения паролей
+    if (!checkPasswordsSimilar()) return;
+
     const credentials = {
         username: name.value,
         password: passwd.value,
@@ -71,6 +69,18 @@ const singUpClick = async () => {
     };
 
     await signUp(credentials, { callbackUrl: "/" });
+};
+
+const checkPasswordsSimilar = () => {
+    confirmedPasswdHasError.value = false;
+    confirmedPasswdError.value = "";
+
+    const isSimilar = confirmedPasswd.value === passwd.value;
+    if (!isSimilar) {
+        confirmedPasswdHasError.value = true;
+        confirmedPasswdError.value = "Пароли должны совпадать";
+    }
+    return isSimilar;
 };
 </script>
 
