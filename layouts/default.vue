@@ -11,7 +11,7 @@
 <script setup lang="ts"></script>
 
 <style lang="scss" scoped>
-#_main-layout {
+#_main-layout.main-layout {
     display: grid;
     min-height: 100vh;
     grid-template-areas:

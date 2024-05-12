@@ -1,10 +1,9 @@
 <template>
     <AuthFormBase @submit.prevent="submit" :loading="isLoading">
         <template #header> Войти в аккаунт </template>
-        {{ values }}
-        {{ errors }}
         <AuthFormInput
             label="Почта"
+            type="email"
             placeholder="Введите почту"
             v-model="email"
             v-bind="emailAttrs"
@@ -12,6 +11,7 @@
         />
         <AuthFormInput
             label="Пароль"
+            type="password"
             placeholder="Введите пароль"
             v-model="password"
             v-bind="passwordAttrs"
@@ -27,7 +27,9 @@
 <script setup lang="ts">
 const { signIn } = useAuth();
 
-const { values, errors, setFieldError, defineField } = useForm();
+const { errors, setFieldError, defineField } = useForm({
+    validationSchema: {},
+});
 const [email, emailAttrs] = defineField("email");
 const [password, passwordAttrs] = defineField("password");
 
@@ -41,8 +43,8 @@ const submit = async () => {
     try {
         isLoading.value = true;
         await signIn(credentials, { callbackUrl: "/" });
-    } catch (error: any) {
-        const issues: any = error?.data?.data?.error?.issues;
+    } catch ({ data }: any) {
+        const issues: any = data?.data?.issues;
         if (issues) {
             issues.forEach((issue: any) => {
                 setFieldError(issue?.path?.[0], issue.message);

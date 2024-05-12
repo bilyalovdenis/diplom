@@ -1,6 +1,8 @@
 import { createError, eventHandler, readBody } from "h3";
+import { Client } from "stytch";
+import type { PasswordsAuthenticateRequest } from "stytch";
 import { z } from "zod";
-import jwt from "jsonwebtoken";
+import * as JwtService from "~/utils/services/jwt";
 
 export const SECRET = process.env.ACCESS_TOKEN_SECRET ?? "";
 
@@ -8,7 +10,7 @@ export default eventHandler(async (event) => {
     const result = z
         .object({
             email: z.string().email(),
-            password: z.string().min(5).max(15),
+            password: z.string().min(1),
         })
         .safeParse(await readBody(event));
     if (!result.success) {
@@ -18,39 +20,46 @@ export default eventHandler(async (event) => {
         });
     }
 
-    const { email } = result.data;
-
-    // const { name, petName, email } = result.data;
-    const user = {
-        id: 1,
-        email,
-        picture: "https://github.com/nuxt.png",
+    const { user, user_id } = await getUser(result.data);
+    const { picture, petName, petSex } =
+        user.untrusted_metadata as StytchUntrustedMetadata; //TODO
+    const jwtBody: JwtUser = {
+        id: user_id,
+        name: user.name?.first_name || "",
+        email: user.emails[0].email,
+        picture,
+        petName,
+        petSex,
+        phone: user.phone_numbers?.[0]?.phone_number,
+        created_at: user.created_at,
     };
-    // const user = {
-    //     id: 1,
-    //     name,
-    //     email
-    //     petSex: null,
-    //     picture: "https://github.com/nuxt.png",
-    //     petName,
-    // };
-
-    const accessToken = jwt.sign({ ...user, scope: ["test", "user"] }, SECRET, {
-        expiresIn: 15,
-    });
-
-    const refreshToken = jwt.sign(
-        { ...user, scope: ["test", "user"] },
-        SECRET,
-        {
-            expiresIn: 60 * 60 * 24,
-        }
-    );
 
     return {
-        token: {
-            accessToken,
-            refreshToken,
-        },
+        token: JwtService.sign(jwtBody),
     };
 });
+
+async function getUser(params: PasswordsAuthenticateRequest) {
+    const { STYTCH_PROJECT_ID, STYTCH_SECRET } = process.env;
+    if (!STYTCH_PROJECT_ID || !STYTCH_SECRET) {
+        throw createError({
+            statusCode: 500,
+            statusMessage: "Internal stytch key is empty",
+        });
+    }
+
+    const client = new Client({
+        project_id: STYTCH_PROJECT_ID,
+        secret: STYTCH_SECRET,
+    });
+
+    try {
+        const resp = await client.passwords.authenticate(params);
+        return resp;
+    } catch (error: any) {
+        throw createError({
+            statusCode: 400,
+            statusMessage: error.error_message,
+        });
+    }
+}

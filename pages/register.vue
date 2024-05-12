@@ -1,14 +1,6 @@
 <template>
     <section class="auth-container">
-        <header class="auth-container__header">
-            <Image
-                class="auth-container__header__logo"
-                src="logo.png"
-                alt="logo"
-                width="40"
-            ></Image>
-            <span>BUSINKA</span>
-        </header>
+        <MainHeader size="large" style="margin-bottom: 10px" />
         <article class="auth-card">
             <Image
                 class="auth-card__image-container"
@@ -38,6 +30,7 @@ definePageMeta({
         unauthenticatedOnly: true,
         navigateAuthenticatedTo: "/",
     },
+    breadcrumbName: false,
 });
 </script>
 
@@ -53,14 +46,6 @@ definePageMeta({
     justify-content: center;
     flex-direction: column;
     align-items: center;
-}
-.auth-container__header {
-    margin-bottom: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32.5px;
-    align-content: center;
 }
 .auth-card {
     width: 1010px;

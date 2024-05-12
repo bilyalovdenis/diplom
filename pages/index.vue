@@ -9,17 +9,15 @@ JWT refreshToken: {{
             refreshToken || "no refreshToken present, are you logged in?"
         }}</pre
     >
-    <button @click="tmp">refresh tokens</button>
     <Button label="loginout" @click="loginOut" />
 </template>
 
 <script setup lang="ts">
-const { signOut, refreshToken, refresh, token, data, status, lastRefreshedAt } =
+import { PATHS } from "~/constants/route";
+
+const { signOut, refreshToken, token, data, status, lastRefreshedAt } =
     useAuth();
-definePageMeta({ auth: true });
-const tmp = async () => {
-    console.log(await refresh());
-};
+definePageMeta({ auth: true, breadcrumbName: false, name: PATHS.home.name });
 const loginOut = () => {
     signOut({ callbackUrl: "/login" });
 };

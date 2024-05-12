@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-    ssr: true,
+    ssr: false,
     devtools: { enabled: true },
     typescript: {
         typeCheck: true,
@@ -15,6 +15,8 @@ export default defineNuxtConfig({
         "nuxt-zod-i18n",
         "@nuxtjs/i18n",
         "@vee-validate/nuxt",
+        "@vueuse/nuxt",
+        "nuxt3-date-fns",
     ],
     veeValidate: {
         // disable or enable auto imports
@@ -65,6 +67,7 @@ export default defineNuxtConfig({
         "primevue/resources/themes/aura-light-green/theme.css",
         "~/assets/main.scss",
         "normalize.css/normalize.css",
+        "bootstrap/dist/css/bootstrap.min.css",
     ],
     zodI18n: {},
     i18n: {

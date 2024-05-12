@@ -17,6 +17,9 @@
         "@pinia/nuxt": "^0.5.1",
         "@types/jsonwebtoken": "^9.0.6",
         "@vee-validate/nuxt": "^4.12.6",
+        "@vueuse/core": "^10.9.0",
+        "@vueuse/nuxt": "^10.9.0",
+        "bootstrap": "^5.3.3",
         "jsonwebtoken": "^9.0.2",
         "normalize.css": "^8.0.1",
         "nuxt": "^3.10.3",
@@ -35,6 +38,7 @@
     "devDependencies": {
         "@sidebase/nuxt-auth": "^0.7.1",
         "nuxt-primevue": "^0.3.1",
+        "nuxt3-date-fns": "^0.2.0",
         "sass": "^1.71.1",
         "typescript": "^5.4.2",
         "vue-tsc": "^1"

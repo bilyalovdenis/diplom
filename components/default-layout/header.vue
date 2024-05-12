@@ -4,6 +4,13 @@
             <UiSearchInput />
         </div>
         <div class="main-layout_header__right">
+            <InputSwitch
+                v-model="streamingModel"
+                :disabled="isLoading"
+                v-tooltip.bottom="{
+                    value: tooltipValue,
+                }"
+            />
             <UiIconButton icon="pi-th-large" />
             <UiIconButton icon="pi-bell" badge />
             <UserAvatar />
@@ -11,7 +18,26 @@
     </header>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { isStreaming, isLoading } = storeToRefs(useStreamStore());
+const { enableStream, disableStream } = useStreamStore();
+
+const streamingModel = computed({
+    get() {
+        return isStreaming.value;
+    },
+    set(value) {
+        if (value) enableStream();
+        else disableStream();
+    },
+});
+
+const tooltipValue = computed(() => {
+    if (isLoading.value) return "Подключаемся к стриму";
+    if (isStreaming.value) return "Отключить стрим";
+    if (!isStreaming.value) return "Включить стрим";
+});
+</script>
 
 <style scoped lang="scss">
 .main-layout_header {

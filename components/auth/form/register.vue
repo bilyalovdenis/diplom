@@ -1,35 +1,49 @@
 <template>
-    <AuthFormBase @submit.prevent="singUpClick">
+    <AuthFormBase @submit.prevent="submit">
         <template #header> Создать аккаунт </template>
         <div class="container">
             <AuthFormInput
                 label="Имя"
+                type="name"
                 placeholder="Введите ваше имя"
                 v-model="name"
-                v-model:error="nameError"
+                v-bind="nameAttrs"
+                v-model:error="errors.name"
             />
             <AuthFormInput
-                label="Почта"
-                type="email"
-                placeholder="Введите почту"
-                v-model="email"
-                v-model:error="emailError"
+                label="Кличка питомца"
+                placeholder="Введите кличку "
+                v-model="petName"
+                v-bind="petNameAttrs"
+                v-model:error="errors.petName"
             />
         </div>
         <AuthFormInput
-            label="Пароль"
-            type="password"
-            placeholder="Введите пароль"
-            v-model="passwd"
-            v-model:error="passwdError"
+            label="Почта"
+            type="email"
+            placeholder="Введите почту"
+            v-model="email"
+            v-bind="emailAttrs"
+            v-model:error="errors.email"
         />
-        <AuthFormInput
-            label="Повторите пароль"
-            type="password"
-            placeholder="Повторите пароль"
-            v-model="confirmedPasswd"
-            v-model:error="confirmedPasswdError"
-        />
+        <div class="container">
+            <AuthFormInput
+                label="Пароль"
+                type="password"
+                placeholder="Введите пароль"
+                v-model="password"
+                v-bind="passwordAttrs"
+                v-model:error="errors.password"
+            />
+            <AuthFormInput
+                label="Повторите пароль"
+                type="password"
+                placeholder="Повторите пароль"
+                v-model="confirmedPasswd"
+                v-bind="confirmedPasswdAttrs"
+                v-model:error="errors.confirmedPasswd"
+            />
+        </div>
         <template #button>
             Зарегистрироваться
             <i class="pi pi-arrow-right"></i>
@@ -40,45 +54,45 @@
 <script setup lang="ts">
 const { signUp } = useAuth();
 
-const name = ref("");
-const nameHasError = ref<boolean>(false);
-const nameError = ref("");
-watch(name, () => (nameHasError.value = false));
+const { errors, setFieldError, defineField } = useForm({
+    validationSchema: {},
+});
+const [name, nameAttrs] = defineField("name");
+const [email, emailAttrs] = defineField("email");
+const [password, passwordAttrs] = defineField("password");
+const [confirmedPasswd, confirmedPasswdAttrs] = defineField("confirmedPasswd");
+const [petName, petNameAttrs] = defineField("petName");
 
-const email = ref("");
-const emailHasError = ref<boolean>(false);
-const emailError = ref("");
-watch(email, () => (emailHasError.value = false));
+const isLoading = ref(false);
 
-const passwd = ref("");
-const passwdHasError = ref<boolean>(false);
-const passwdError = ref("");
-watch(passwd, () => (passwdHasError.value = false));
-
-const confirmedPasswd = ref("");
-const confirmedPasswdHasError = ref<boolean>(false);
-const confirmedPasswdError = ref("");
-watch(confirmedPasswd, () => (confirmedPasswdHasError.value = false));
-const singUpClick = async () => {
+const submit = async () => {
     if (!checkPasswordsSimilar()) return;
 
     const credentials = {
-        username: name.value,
-        password: passwd.value,
+        name: name.value,
+        password: password.value,
         email: email.value,
+        petName: petName.value,
     };
-
-    await signUp(credentials, { callbackUrl: "/" });
+    try {
+        isLoading.value = true;
+        await signUp(credentials, { callbackUrl: "/" });
+    } catch ({ data }: any) {
+        const issues: any = data?.data?.issues;
+        if (issues) {
+            issues.forEach((issue: any) => {
+                setFieldError(issue?.path?.[0], issue.message);
+            });
+        }
+    } finally {
+        isLoading.value = false;
+    }
 };
 
 const checkPasswordsSimilar = () => {
-    confirmedPasswdHasError.value = false;
-    confirmedPasswdError.value = "";
-
-    const isSimilar = confirmedPasswd.value === passwd.value;
+    const isSimilar = confirmedPasswd.value === password.value;
     if (!isSimilar) {
-        confirmedPasswdHasError.value = true;
-        confirmedPasswdError.value = "Пароли должны совпадать";
+        setFieldError("confirmedPasswd", "Пароли должны совпадать");
     }
     return isSimilar;
 };

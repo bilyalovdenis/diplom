@@ -1,63 +1,84 @@
 import { createError, eventHandler, readBody } from "h3";
 import { z } from "zod";
-import jwt from "jsonwebtoken";
 import { Client } from "stytch";
-import { SECRET } from "./login.post";
-
+import {
+    MIN_PASSWORD_LENGTH,
+    MAX_PASSWORD_LENGTH,
+    MAX_NAME_LENGTH,
+} from "~/constants/user";
+import * as JwtService from "~/utils/services/jwt";
 export default eventHandler(async (event) => {
     const result = z
         .object({
-            username: z.string().min(1),
+            name: z.string().min(1).max(MAX_NAME_LENGTH),
             email: z.string().email(),
-            password: z.string().min(1),
+            petName: z.string().min(1).max(MAX_NAME_LENGTH),
+            password: z
+                .string()
+                .min(MIN_PASSWORD_LENGTH)
+                .max(MAX_PASSWORD_LENGTH),
         })
         .safeParse(await readBody(event));
     if (!result.success) {
         throw createError({
-            statusCode: 403,
-            statusMessage: result.error.message,
+            statusCode: 400,
+            data: result.error,
+        });
+    }
+    const { name, email, password } = result.data;
+
+    const params: StytchUserPost = {
+        email,
+        password,
+        name: { first_name: name },
+        untrusted_metadata: {
+            picture: null,
+            petName: result.data.petName,
+            petSex: null,
+        },
+    };
+
+    const { user, user_id } = await createUser(params);
+
+    const { picture, petName, petSex } =
+        user.untrusted_metadata as StytchUntrustedMetadata; //TODO
+    const jwtBody: JwtUser = {
+        id: user_id,
+        name: user.name?.first_name || "",
+        email: user.emails[0].email,
+        picture,
+        petName,
+        petSex,
+        created_at: user.created_at,
+        phone: user.phone_numbers?.[0]?.phone_number,
+    };
+
+    return {
+        token: JwtService.sign(jwtBody),
+    };
+});
+async function createUser(params: StytchUserPost) {
+    const { STYTCH_PROJECT_ID, STYTCH_SECRET } = process.env;
+    if (!STYTCH_PROJECT_ID || !STYTCH_SECRET) {
+        throw createError({
+            statusCode: 500,
+            statusMessage: "Internal stytch key is empty",
         });
     }
 
     const client = new Client({
-        project_id: "project-test-a6a4e32e-8905-4ded-9f24-f67ef84572c1",
-        secret: "secret-test-2Zjmd_RoxEyrwyt2ukZpCe5MynURopd-y9E=",
+        project_id: STYTCH_PROJECT_ID,
+        secret: STYTCH_SECRET,
     });
 
-    const params = {
-        email: "sandbox@stytch.com",
-    };
     try {
-        const resp = client.users.create(params);
-        console.log("resp", resp);
-    } catch (error) {
-        console.log("error", error);
+        const resp = await client.passwords.create(params);
+        return resp;
+    } catch (error: any) {
+        console.error(error, "error");
+        throw createError({
+            statusCode: 400,
+            statusMessage: error.error_message,
+        });
     }
-    const expiresIn = 15;
-
-    const { username } = result.data;
-
-    const user = {
-        username,
-        picture: "https://github.com/nuxt.png",
-        name: "User " + username,
-    };
-
-    const accessToken = jwt.sign({ ...user, scope: ["test", "user"] }, SECRET, {
-        expiresIn,
-    });
-    const refreshToken = jwt.sign(
-        { ...user, scope: ["test", "user"] },
-        SECRET,
-        {
-            expiresIn: 60 * 60 * 24,
-        }
-    );
-
-    return {
-        token: {
-            accessToken,
-            refreshToken,
-        },
-    };
-});
+}

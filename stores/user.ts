@@ -1,5 +1,3 @@
-import { getServerSession } from "#auth";
-
 export const useUserStore = defineStore("userStore", {
     state: () => ({
         name: "",

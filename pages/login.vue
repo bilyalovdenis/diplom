@@ -1,14 +1,6 @@
 <template>
     <section class="auth-container">
-        <header class="auth-container__header">
-            <Image
-                class="auth-container__header__logo"
-                src="logo.png"
-                alt="logo"
-                width="40"
-            />
-            <span>BUSINKA</span>
-        </header>
+        <MainHeader size="large" style="margin-bottom: 10px" />
         <article class="auth-card">
             <Image
                 class="auth-card__image-container"
@@ -37,9 +29,7 @@ definePageMeta({
     auth: {
         unauthenticatedOnly: true,
     },
-});
-onMounted(() => {
-    console.log(process.env.STYTCH_PROJECT_ID, process.env);
+    breadcrumbName: false,
 });
 </script>
 
@@ -55,14 +45,6 @@ onMounted(() => {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-}
-.auth-container__header {
-    margin-bottom: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32.5px;
-    align-content: center;
 }
 .auth-card {
     width: 1010px;
