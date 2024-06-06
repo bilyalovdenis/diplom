@@ -1,24 +1,19 @@
 import { createError, eventHandler, readBody } from "h3";
 import { z } from "zod";
-import { Client } from "stytch";
-import {
-    MIN_PASSWORD_LENGTH,
-    MAX_PASSWORD_LENGTH,
-    MAX_NAME_LENGTH,
-} from "~/constants/user";
+import { SStytchUserPost, SName } from "~/types";
 import * as JwtService from "~/utils/services/jwt";
+import { createUser } from "~/utils/services/user";
+
 export default eventHandler(async (event) => {
-    const result = z
-        .object({
-            name: z.string().min(1).max(MAX_NAME_LENGTH),
-            email: z.string().email(),
-            petName: z.string().min(1).max(MAX_NAME_LENGTH),
-            password: z
-                .string()
-                .min(MIN_PASSWORD_LENGTH)
-                .max(MAX_PASSWORD_LENGTH),
-        })
+    const result = SStytchUserPost.pick({ email: true, password: true })
+        .merge(
+            z.object({
+                name: SName,
+                petName: SName,
+            })
+        )
         .safeParse(await readBody(event));
+
     if (!result.success) {
         throw createError({
             statusCode: 400,
@@ -57,28 +52,3 @@ export default eventHandler(async (event) => {
         token: JwtService.sign(jwtBody),
     };
 });
-async function createUser(params: StytchUserPost) {
-    const { STYTCH_PROJECT_ID, STYTCH_SECRET } = process.env;
-    if (!STYTCH_PROJECT_ID || !STYTCH_SECRET) {
-        throw createError({
-            statusCode: 500,
-            statusMessage: "Internal stytch key is empty",
-        });
-    }
-
-    const client = new Client({
-        project_id: STYTCH_PROJECT_ID,
-        secret: STYTCH_SECRET,
-    });
-
-    try {
-        const resp = await client.passwords.create(params);
-        return resp;
-    } catch (error: any) {
-        console.error(error, "error");
-        throw createError({
-            statusCode: 400,
-            statusMessage: error.error_message,
-        });
-    }
-}

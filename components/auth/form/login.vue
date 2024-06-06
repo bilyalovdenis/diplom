@@ -1,7 +1,7 @@
 <template>
     <AuthFormBase @submit.prevent="submit" :loading="isLoading">
         <template #header> Войти в аккаунт </template>
-        <AuthFormInput
+        <UiFormInput
             label="Почта"
             type="email"
             placeholder="Введите почту"
@@ -9,7 +9,7 @@
             v-bind="emailAttrs"
             v-model:error="errors.email"
         />
-        <AuthFormInput
+        <UiFormInput
             label="Пароль"
             type="password"
             placeholder="Введите пароль"

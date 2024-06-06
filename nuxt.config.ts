@@ -64,10 +64,11 @@ export default defineNuxtConfig({
         /* Options */
     },
     css: [
+        "bootstrap/dist/css/bootstrap-utilities.min.css",
+        "bootstrap/dist/css/bootstrap-grid.min.css",
         "primevue/resources/themes/aura-light-green/theme.css",
         "~/assets/main.scss",
         "normalize.css/normalize.css",
-        "bootstrap/dist/css/bootstrap.min.css",
     ],
     zodI18n: {},
     i18n: {

@@ -1,8 +1,8 @@
 <template>
-    <Avatar
-        :label="picture ? picture : petName?.[0] ?? name[0]"
-        shape="circle"
-        :image="picture ?? undefined"
+    <UserBaseAvatar
+        :picture="picture"
+        :pet-name="petName"
+        :name="name"
         @click="menu.toggle($event)"
         class="user-avatar"
     />
@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { PATHS } from "~/constants/route";
 
-const { name, picture, petName }: JwtUser = await useAuth().getSession();
+const { id, name, picture, petName }: JwtUser = await useAuth().getSession();
 
 const { signOut } = useAuth();
 const loginOut = () => {
@@ -53,13 +53,17 @@ const menuItems = ref([
         label: "Профиль",
         icon: "pi pi-user",
         route: {
-            name: PATHS.user.name,
+            name: PATHS.userId.name,
+            params: { userId: id },
         },
     },
     {
         label: "Настройки",
         icon: "pi pi-cog",
-        route: PATHS.settings,
+        route: {
+            name: PATHS.settings.name,
+            params: { userId: id },
+        },
     },
     {
         label: "Выйти",
@@ -74,8 +78,6 @@ const menuItems = ref([
     cursor: pointer;
     outline: solid 1px transparent;
     transition: all ease 0.3s;
-    background-color: var(--avatar-background);
-    color: var(--avatar-color);
     &:hover {
         outline-color: var(--primary-color);
     }

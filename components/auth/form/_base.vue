@@ -7,6 +7,7 @@
         <Button
             type="submit"
             :loading="props.loading"
+            loading-icon="pi pi-spin pi-spinner"
             class="auth-form__auth-button"
             severity="primary"
             rounded

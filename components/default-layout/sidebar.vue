@@ -35,10 +35,6 @@ const items = computed(() => [
                 link: { name: PATHS.settings.name, params: { userId: id } },
                 icon: "pi pi-cog",
             },
-            {
-                label: "Моя Ветклиника",
-                icon: "pi pi-home",
-            },
         ],
     },
 ]);

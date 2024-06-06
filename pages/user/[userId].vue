@@ -1,12 +1,15 @@
 <template>
-    <div class="user-page-container">
+    <div v-if="route.name === PATHS.userId.name" class="user-page-container">
         <UserBanner class="mb-2 banner" />
         <UserInfoCard />
     </div>
+    <NuxtPage v-else />
 </template>
 
 <script setup lang="ts">
 import { PATHS } from "~/constants/route";
+
+const route = useRoute();
 
 definePageMeta({
     auth: true,

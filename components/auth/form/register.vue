@@ -1,8 +1,8 @@
 <template>
     <AuthFormBase @submit.prevent="submit">
         <template #header> Создать аккаунт </template>
-        <div class="container">
-            <AuthFormInput
+        <div class="reg-container">
+            <UiFormInput
                 label="Имя"
                 type="name"
                 placeholder="Введите ваше имя"
@@ -10,7 +10,7 @@
                 v-bind="nameAttrs"
                 v-model:error="errors.name"
             />
-            <AuthFormInput
+            <UiFormInput
                 label="Кличка питомца"
                 placeholder="Введите кличку "
                 v-model="petName"
@@ -18,7 +18,7 @@
                 v-model:error="errors.petName"
             />
         </div>
-        <AuthFormInput
+        <UiFormInput
             label="Почта"
             type="email"
             placeholder="Введите почту"
@@ -26,8 +26,8 @@
             v-bind="emailAttrs"
             v-model:error="errors.email"
         />
-        <div class="container">
-            <AuthFormInput
+        <div class="reg-container">
+            <UiFormInput
                 label="Пароль"
                 type="password"
                 placeholder="Введите пароль"
@@ -35,7 +35,7 @@
                 v-bind="passwordAttrs"
                 v-model:error="errors.password"
             />
-            <AuthFormInput
+            <UiFormInput
                 label="Повторите пароль"
                 type="password"
                 placeholder="Повторите пароль"
@@ -99,7 +99,7 @@ const checkPasswordsSimilar = () => {
 </script>
 
 <style scoped lang="scss">
-.container {
+.reg-container {
     display: flex;
     width: 100%;
     gap: 16px;

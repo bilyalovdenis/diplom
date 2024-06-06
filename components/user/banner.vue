@@ -3,12 +3,12 @@
         <div class="user-banner__image"></div>
         <div class="user-banner__panel">
             <div class="d-flex align-items-end gap-3">
-                <Avatar
-                    :label="picture ? picture : petName?.[0] ?? name[0]"
-                    :image="picture ?? undefined"
-                    class="user-banner__avatar"
+                <UserBaseAvatar
+                    :picture="picture"
+                    :pet-name="petName"
+                    :name="name"
                     size="xlarge"
-                    shape="circle"
+                    class="user-banner__avatar"
                 />
                 <div class="user-banner__name-container">
                     <span class="user-banner__main-name">
@@ -18,7 +18,6 @@
                         Родитель: {{ name }}
                     </span>
                 </div>
-                <div></div>
             </div>
             <div v-if="created_at" class="user-banner__fun-fact">
                 <span>{{ useFormat(created_at, "MM/dd/yyyy") }}</span>
@@ -54,8 +53,6 @@ const { name, petName, picture, created_at }: JwtUser =
         height: 180px;
         font-size: 62px;
         width: 180px;
-        background-color: var(--avatar-background);
-        color: var(--avatar-color);
     }
     &__name-container {
         display: flex;

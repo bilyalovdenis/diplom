@@ -59,7 +59,7 @@ type Props = {
 const props = defineProps<Props>();
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @use "~/assets/modules/mixins";
 
 .menu-sidebar {
